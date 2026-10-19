@@ -2498,9 +2498,43 @@ function bindBasicAdminFallbackEvents() {
     if (event.key === "Escape") closeEmbeddedAdminPanelFallback();
   });
 }
+function initAdminHamburgerMenu() {
+  const button = document.getElementById("adminHamburgerButton");
+  const drawer = document.getElementById("adminMobileDrawer");
 
+  if (!button || !drawer) return;
+
+  function closeMenu() {
+    drawer.hidden = true;
+    button.setAttribute("aria-expanded", "false");
+  }
+
+  button.addEventListener("click", () => {
+    const abrir = drawer.hidden;
+    drawer.hidden = !abrir;
+    button.setAttribute("aria-expanded", String(abrir));
+  });
+
+  // Fecha o menu ao selecionar uma opção
+  drawer.querySelectorAll("[data-admin-tab]").forEach((tab) => {
+    tab.addEventListener("click", closeMenu);
+  });
+
+  // Fecha ao clicar fora
+  document.addEventListener("click", (event) => {
+    if (!drawer.contains(event.target) &&
+        !button.contains(event.target)) {
+      closeMenu();
+    }
+  });
+
+  // Fecha com a tecla ESC
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
+  });
+}
 initAdminLogin();
-
+initAdminHamburgerMenu();
 try {
   const adminInitialized = initEmbeddedAdminPanel();
   if (!adminInitialized) bindBasicAdminFallbackEvents();
