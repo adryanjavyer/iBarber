@@ -4774,3 +4774,232 @@ html[data-apple-motion="ready"] .apple-experience .hero-metrics[data-motion-reve
   .apple-experience .progress-area { top: 6px; }
   .apple-experience .footer-actions { bottom: 6px; }
 }
+
+/* Gestão de barbeiros — painel responsivo, leve e consistente com o tema Apple. */
+.apple-experience .admin-tabs {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.apple-experience .admin-tabs::-webkit-scrollbar { display: none; }
+.apple-experience .admin-tabs .admin-tab {
+  min-width: max-content;
+  padding: 0 18px;
+  white-space: nowrap;
+}
+.apple-experience .barber-manager-card { padding: clamp(18px, 3vw, 30px); }
+.apple-experience .barber-heading { align-items: center; }
+.apple-experience .barber-count {
+  flex-shrink: 0;
+  border: 1px solid rgba(48, 209, 88, .2);
+  border-radius: 999px;
+  padding: 9px 13px;
+  background: rgba(48, 209, 88, .09);
+  color: #89e7a2;
+  font-size: .78rem;
+  font-weight: 700;
+}
+.apple-experience .barber-manager-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: 24px;
+}
+.apple-experience .barber-form-area {
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 24px;
+  padding: clamp(16px, 2vw, 22px);
+  background: rgba(255,255,255,.025);
+}
+.apple-experience .barber-subheading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.apple-experience .barber-form-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid rgba(41, 151, 255, .28);
+  border-radius: 15px;
+  background: rgba(41,151,255,.13);
+  color: #80beff;
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+.apple-experience .barber-subheading h3,
+.apple-experience .barber-roster-heading h3 {
+  margin: 0 0 5px;
+  font-size: 1rem;
+  font-weight: 750;
+  letter-spacing: -.02em;
+}
+.apple-experience .barber-subheading p,
+.apple-experience .barber-roster-heading p {
+  margin: 0;
+  color: rgba(245,245,247,.48);
+  font-size: .79rem;
+  line-height: 1.5;
+}
+.apple-experience .barber-form { display: grid; gap: 16px; }
+.apple-experience .barber-form label { display: block; }
+.apple-experience .barber-form label span { margin-bottom: 7px; }
+.apple-experience .barber-form label small {
+  color: rgba(245,245,247,.4);
+  font-size: .72rem;
+  font-weight: 500;
+}
+.apple-experience .barber-form input {
+  min-height: 51px;
+  border-radius: 15px;
+}
+.apple-experience .barber-form input::placeholder { color: rgba(245,245,247,.3); }
+.apple-experience .barber-form .admin-primary-button {
+  margin-top: 3px;
+  min-height: 50px;
+  border: 1px solid rgba(67, 165, 255, .33);
+  border-radius: 15px;
+  background: #1683ed;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 10px 26px rgba(41,151,255,.15);
+}
+.apple-experience .barber-form .admin-primary-button:disabled { opacity: .42; cursor: not-allowed; box-shadow: none; }
+.apple-experience .barber-form-feedback {
+  min-height: 21px;
+  margin: 10px 0 0;
+  font-size: .8rem;
+  line-height: 1.45;
+  color: rgba(245,245,247,.6);
+}
+.apple-experience .barber-form-feedback[data-tone="error"] { color: #ff9b95; }
+.apple-experience .barber-form-feedback[data-tone="success"] { color: #8fe8a5; }
+.apple-experience .barber-roster-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 5px 0 15px;
+}
+.apple-experience .barber-live-dot {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #30d158;
+  box-shadow: 0 0 0 4px rgba(48,209,88,.1);
+}
+.apple-experience .barber-roster-list { display: grid; gap: 10px; }
+.apple-experience .barber-roster-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 19px;
+  background: rgba(255,255,255,.035);
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+.apple-experience .barber-roster-item:hover {
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.045);
+}
+.apple-experience .barber-roster-item.is-inactive { opacity: .64; }
+.apple-experience .barber-avatar {
+  width: 51px;
+  height: 51px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(41,151,255,.16), rgba(255,255,255,.035));
+  color: #edf4ff;
+  font-weight: 750;
+  font-size: .94rem;
+}
+.apple-experience .barber-roster-info { flex: 1; min-width: 0; }
+.apple-experience .barber-roster-info strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: .93rem;
+  overflow-wrap: anywhere;
+}
+.apple-experience .barber-roster-info small {
+  display: block;
+  color: rgba(245,245,247,.53);
+  font-size: .77rem;
+  line-height: 1.35;
+}
+.apple-experience .barber-roster-status {
+  display: inline-block;
+  margin-top: 7px;
+  color: rgba(245,245,247,.4);
+  font-size: .7rem;
+  font-weight: 600;
+}
+.apple-experience .barber-roster-status.is-active { color: #78dfa0; }
+.apple-experience .barber-roster-status::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: 1px;
+}
+.apple-experience .barber-roster-action {
+  min-height: 37px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  padding: 0 12px;
+  font-size: .77rem;
+  font-weight: 650;
+  transition: background .2s ease, opacity .2s ease;
+}
+.apple-experience .barber-roster-action.danger {
+  border: 1px solid rgba(255,69,58,.19);
+  background: rgba(255,69,58,.09);
+  color: #ff8d88;
+}
+.apple-experience .barber-roster-action.danger:hover { background: rgba(255,69,58,.17); }
+.apple-experience .barber-roster-action.reactivate {
+  border: 1px solid rgba(41,151,255,.25);
+  background: rgba(41,151,255,.11);
+  color: #86c3ff;
+}
+.apple-experience .barber-roster-action:disabled { opacity: .45; cursor: not-allowed; }
+.apple-experience .barber-roster-help {
+  margin: 14px 2px 0;
+  color: rgba(245,245,247,.44);
+  font-size: .74rem;
+  line-height: 1.6;
+}
+.apple-experience .barber-empty-roster,
+.apple-experience .empty-professionals {
+  border: 1px dashed rgba(255,255,255,.16);
+  border-radius: 18px;
+  padding: 22px;
+  background: rgba(255,255,255,.025);
+  color: rgba(245,245,247,.68);
+  font-size: .83rem;
+  line-height: 1.55;
+}
+.apple-experience .empty-professionals strong { color: #f5f5f7; }
+.apple-experience .empty-professionals p { margin: 6px 0 0; }
+@media (max-width: 800px) {
+  .apple-experience .barber-manager-grid { grid-template-columns: 1fr; gap: 22px; }
+}
+@media (max-width: 520px) {
+  .apple-experience .admin-tabs { gap: 4px; padding: 5px; }
+  .apple-experience .admin-tabs .admin-tab { min-width: max-content; padding: 0 14px; font-size: .78rem; }
+  .apple-experience .barber-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .apple-experience .barber-roster-item { gap: 9px; padding: 12px 10px; }
+  .apple-experience .barber-avatar { width: 42px; height: 42px; border-radius: 13px; }
+  .apple-experience .barber-roster-action { padding: 0 10px; }
+}
