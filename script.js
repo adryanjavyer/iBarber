@@ -346,27 +346,12 @@ function initAdminLogin() {
 }
 
 const DEFAULT_PROFESSIONALS = [
-  {
-    id: "Carlos",
-    name: "Carlos Gabriel",
-    role: "Barbeiro especialista",
-    initial: "CG",
-    note: "Mais procurado",
-  },
 
   {
     id: "Adryan",
     name: "Adryan Javyer",
     role: "Barbeiro especialista",
     initial: "A",
-    note: "Atendimento rápido",
-  },
-
-  {
-    id: "Beatriz",
-    name: "Beatriz Cassemiro",
-    role: "Especialista em cortes femininos",
-    initial: "B",
     note: "Atendimento rápido",
   },
 ];
