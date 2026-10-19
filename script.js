@@ -5,6 +5,8 @@ const BARBERSHOP = {
 
 const BOOKINGS_STORAGE_KEY = "dkBarberBookings";
 const BOOKINGS_REMOTE_TABLE = window.DK_BOOKINGS_TABLE || "dk_bookings";
+const PROFESSIONALS_REMOTE_TABLE = window.DK_PROFESSIONALS_TABLE || "dk_professionals";
+const PROFESSIONALS_STORAGE_KEY = "dkBarberProfessionalsCacheV1";
 
 const ADMIN_AUTH_CONFIG = {
   supabaseUrl: window.DK_SUPABASE_CONFIG?.url || window.SUPABASE_URL || "",
@@ -343,7 +345,7 @@ function initAdminLogin() {
   });
 }
 
-const professionals = [
+const DEFAULT_PROFESSIONALS = [
   {
     id: "Carlos",
     name: "Carlos Gabriel",
@@ -368,6 +370,116 @@ const professionals = [
     note: "Atendimento rápido",
   },
 ];
+
+// O Supabase e a fonte oficial. O cache local acelera a abertura da agenda;
+// cadastros e exclusoes so sao confirmados depois que o banco responde.
+function escapeProfessionalHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  })[character]);
+}
+
+function cleanProfessional(item, index = 0) {
+  if (!item || !String(item.id || "").trim() || !String(item.name || "").trim()) return null;
+  const name = String(item.name).trim();
+  const derivedInitials = name.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+  return {
+    id: String(item.id),
+    name,
+    role: String(item.role || "Barbeiro").trim(),
+    note: String(item.note || "").trim(),
+    initial: String(item.initial || derivedInitials).toUpperCase().slice(0, 3),
+    active: item.active !== false,
+    sortOrder: Number(item.sort_order ?? item.sortOrder ?? index) || 0,
+  };
+}
+
+function readCachedProfessionals() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(PROFESSIONALS_STORAGE_KEY));
+    if (Array.isArray(cached)) return cached.map(cleanProfessional).filter(Boolean);
+  } catch (error) {
+    console.warn("Nao foi possivel ler o cache de profissionais.", error);
+  }
+  return null;
+}
+
+let professionals = readCachedProfessionals()
+  ?? DEFAULT_PROFESSIONALS.map((item, index) => cleanProfessional(item, index));
+let professionalsLoadedFromRemote = false;
+let professionalsLoadPromise = null;
+let professionalsConnectionMessage = "Conectando ao Supabase...";
+
+function getActiveProfessionals() {
+  return professionals.filter((item) => item.active);
+}
+
+function replaceProfessionalCatalog(newCatalog) {
+  professionals = newCatalog.map(cleanProfessional).filter(Boolean)
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, "pt-BR"));
+  try {
+    localStorage.setItem(PROFESSIONALS_STORAGE_KEY, JSON.stringify(professionals));
+  } catch (error) {
+    console.warn("Nao foi possivel atualizar o cache de profissionais.", error);
+  }
+  if (typeof state !== "undefined" && state.professionalId) {
+    if (!getActiveProfessionals().some((item) => item.id === state.professionalId)) {
+      state.professionalId = getActiveProfessionals()[0]?.id || "";
+      state.bookingId = "";
+    }
+    renderProfessionals();
+    renderTimes();
+    updateUI();
+  } else if (typeof state !== "undefined") {
+    state.professionalId = getActiveProfessionals()[0]?.id || "";
+    renderProfessionals();
+    updateUI();
+  }
+  window.refreshProfessionalsInAdmin?.();
+}
+
+async function syncProfessionalsFromRemote() {
+  if (professionalsLoadPromise) return professionalsLoadPromise;
+  const client = getAdminSupabaseClient();
+  if (!client) {
+    professionalsLoadedFromRemote = false;
+    professionalsConnectionMessage = "Conexao com Supabase nao configurada.";
+    window.refreshProfessionalsInAdmin?.();
+    return false;
+  }
+  professionalsLoadPromise = (async () => {
+    try {
+      const { data, error } = await client.from(PROFESSIONALS_REMOTE_TABLE)
+        .select("id, name, role, note, initial, active, sort_order")
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      professionalsLoadedFromRemote = true;
+      professionalsConnectionMessage = "";
+      replaceProfessionalCatalog(data || []);
+      return true;
+    } catch (error) {
+      console.warn("Nao foi possivel sincronizar os barbeiros do Supabase.", error);
+      professionalsLoadedFromRemote = false;
+      professionalsConnectionMessage = error?.code === "42P01" || error?.code === "PGRST205"
+        ? "Tabela dk_professionals nao encontrada. Execute o arquivo SQL enviado no Supabase."
+        : "Sem acesso a lista de profissionais. Verifique a tabela e as permissoes no Supabase.";
+      window.refreshProfessionalsInAdmin?.();
+      return false;
+    } finally {
+      professionalsLoadPromise = null;
+    }
+  })();
+  return professionalsLoadPromise;
+}
+
+function watchRemoteProfessionals() {
+  const client = getAdminSupabaseClient();
+  if (!client?.channel) return;
+  client.channel("dk-public-professionals-roster")
+    .on("postgres_changes", { event: "*", schema: "public", table: PROFESSIONALS_REMOTE_TABLE }, () => {
+      syncProfessionalsFromRemote();
+    }).subscribe();
+}
 
 const services = [
   { id: "pe-barba", name: "PE + Barba", duration: "30 min", price: "R$ 20,00", image: "./PE%20%2B%20Barba.png" },
@@ -691,7 +803,7 @@ const scheduleSubtitle = document.getElementById("scheduleSubtitle");
 let lastRenderedStep = state.currentStep;
 
 function getSelectedProfessional() {
-  return professionals.find((item) => item.id === state.professionalId);
+  return getActiveProfessionals().find((item) => item.id === state.professionalId);
 }
 
 function getSelectedService() {
@@ -779,21 +891,24 @@ function autoAdvanceAfterOptionClick() {
 }
 
 function renderProfessionals() {
-  professionalsList.innerHTML = professionals.map((item) => `
-    <button type="button" class="option-card professional-card ${state.professionalId === item.id ? "selected" : ""}" data-professional-id="${item.id}">
-      <span class="avatar">${item.initial}</span>
+  const activeProfessionals = getActiveProfessionals();
+  professionalsList.innerHTML = activeProfessionals.length ? activeProfessionals.map((item) => `
+    <button type="button" class="option-card professional-card ${state.professionalId === item.id ? "selected" : ""}" data-professional-id="${escapeProfessionalHtml(item.id)}">
+      <span class="avatar">${escapeProfessionalHtml(item.initial)}</span>
       <span class="option-main">
-        <strong>${item.name}</strong>
-        <small>${item.role}</small>
-        <span class="option-note">${item.note}</span>
+        <strong>${escapeProfessionalHtml(item.name)}</strong>
+        <small>${escapeProfessionalHtml(item.role)}</small>
+        ${item.note ? `<span class="option-note">${escapeProfessionalHtml(item.note)}</span>` : ""}
       </span>
       <span class="arrow">›</span>
     </button>
-  `).join("");
+  `).join("") : `<div class="empty-professionals" role="status"><strong>Agenda indisponível no momento</strong><p>Nenhum profissional está recebendo novos agendamentos.</p></div>`;
 
-  document.querySelectorAll("[data-professional-id]").forEach((button) => {
+  professionalsList.querySelectorAll("[data-professional-id]").forEach((button) => {
     button.addEventListener("click", () => {
+      if (!getActiveProfessionals().some((item) => item.id === button.dataset.professionalId)) return;
       state.professionalId = button.dataset.professionalId;
+      ensureSelectedTimeIsAvailable();
       renderProfessionals();
       updateUI();
       autoAdvanceAfterOptionClick();
@@ -962,10 +1077,11 @@ function renderTimes() {
 }
 
 function isCurrentStepValid() {
-  if (state.currentStep === 0) return Boolean(state.professionalId);
+  if (state.currentStep === 0) return Boolean(getSelectedProfessional());
   if (state.currentStep === 1) return Boolean(state.serviceId);
   if (state.currentStep === 2) return Boolean(state.dayIso && isSelectedDayAvailable() && state.time && !isTimeUnavailable(state.time));
   if (state.currentStep === 3) {
+    if (!getSelectedProfessional()) return false;
     const nameOk = state.clientName.trim().length >= 3;
     const phoneDigits = state.clientPhone.replace(/\D/g, "");
     const phoneOk = phoneDigits.length >= 10;
@@ -1137,7 +1253,7 @@ function goBack() {
 
 function resetBooking() {
   state.currentStep = 0;
-  state.professionalId = professionals[0]?.id || "";
+  state.professionalId = getActiveProfessionals()[0]?.id || "";
   state.serviceId = "pe-barba";
   const nextBookableDate = getNextBookableDate();
   state.calendarDate = getMonthStart(nextBookableDate);
@@ -1318,6 +1434,14 @@ function initEmbeddedAdminPanel() {
   const manualStatus = $("#manualStatus");
   const manualQuickOpenButton = $("#manualQuickOpenButton");
   const manualBookingDetails = $("#manualBookingDetails");
+  const barberForm = $("#barberForm");
+  const barberName = $("#barberName");
+  const barberRole = $("#barberRole");
+  const barberNote = $("#barberNote");
+  const barberSubmitButton = $("#barberSubmitButton");
+  const barberFormFeedback = $("#barberFormFeedback");
+  const barberRosterList = $("#barberRosterList");
+  const barbersCount = $("#barbersCount");
 
   function adminTodayIso() {
     const date = new Date();
@@ -1847,6 +1971,7 @@ function initEmbeddedAdminPanel() {
     renderDashboard();
     renderBookings();
     renderReports();
+    renderBarbers();
   }
 
   function setActiveAdminTab(tab) {
@@ -1896,19 +2021,140 @@ function initEmbeddedAdminPanel() {
   }
 
   function populateManualForm() {
-    manualProfessional.innerHTML = professionals.map((professional) => `<option value="${professional.id}">${professional.name}</option>`).join("");
+    const currentValue = manualProfessional.value;
+    const activeProfessionals = getActiveProfessionals();
+    manualProfessional.innerHTML = activeProfessionals.length
+      ? activeProfessionals.map((professional) => `<option value="${escapeProfessionalHtml(professional.id)}">${escapeProfessionalHtml(professional.name)}</option>`).join("")
+      : `<option value="">Nenhum profissional disponível</option>`;
+    if (activeProfessionals.some((item) => item.id === currentValue)) manualProfessional.value = currentValue;
+    manualProfessional.disabled = !activeProfessionals.length;
     manualService.innerHTML = services.map((service) => `<option value="${service.id}">${service.name} · ${service.price}</option>`).join("");
-    manualDate.value = toISODate(getNextBookableDate(adminParseIsoDate(adminTodayIso())));
+    if (!manualDate.value) manualDate.value = toISODate(getNextBookableDate(adminParseIsoDate(adminTodayIso())));
     if (bookingDayFilter) bookingDayFilter.value = adminState.filters.day || adminTodayIso();
     updateManualTimeOptions();
     reportDate.value = adminState.report.date;
+  }
+
+  function setBarberFormFeedback(message, type = "") {
+    if (!barberFormFeedback) return;
+    barberFormFeedback.textContent = message;
+    barberFormFeedback.dataset.tone = type;
+  }
+
+  function renderBarbers() {
+    if (!barberRosterList) return;
+    const activeCount = getActiveProfessionals().length;
+    barbersCount.textContent = `${activeCount} ativo${activeCount !== 1 ? "s" : ""}`;
+    barberSubmitButton.disabled = !professionalsLoadedFromRemote || barberSubmitButton.dataset.saving === "true";
+    if (!professionalsLoadedFromRemote) {
+      setBarberFormFeedback(professionalsConnectionMessage || "Conectando ao Supabase...", "error");
+    } else if (barberFormFeedback.dataset.tone === "error" && !barberFormFeedback.dataset.formError) {
+      setBarberFormFeedback("", "");
+    }
+    barberRosterList.innerHTML = professionals.length ? professionals.map((item) => `
+      <article class="barber-roster-item ${item.active ? "" : "is-inactive"}">
+        <span class="barber-avatar" aria-hidden="true">${escapeProfessionalHtml(item.initial)}</span>
+        <div class="barber-roster-info">
+          <strong>${escapeProfessionalHtml(item.name)}</strong>
+          <small>${escapeProfessionalHtml(item.role)}</small>
+          <span class="barber-roster-status ${item.active ? "is-active" : ""}">${item.active ? "Disponível para agendamento" : "Fora da agenda"}</span>
+        </div>
+        <button class="barber-roster-action ${item.active ? "danger" : "reactivate"}" type="button"
+          data-barber-action="${item.active ? "deactivate" : "reactivate"}" data-barber-id="${escapeProfessionalHtml(item.id)}"
+          ${!professionalsLoadedFromRemote ? "disabled" : ""}>
+          ${item.active ? "Excluir" : "Reativar"}
+        </button>
+      </article>
+    `).join("") : `<div class="barber-empty-roster">Nenhum profissional cadastrado. Cadastre o primeiro barbeiro ao lado.</div>`;
+  }
+
+  async function addBarber(event) {
+    event.preventDefault();
+    if (!professionalsLoadedFromRemote || barberSubmitButton.disabled) return;
+    const name = barberName.value.trim().replace(/\s+/g, " ");
+    const role = barberRole.value.trim().replace(/\s+/g, " ");
+    const note = barberNote.value.trim().replace(/\s+/g, " ");
+    if (name.length < 3 || role.length < 3) {
+      setBarberFormFeedback("Informe nome e especialidade com pelo menos 3 caracteres.", "error");
+      barberFormFeedback.dataset.formError = "true";
+      return;
+    }
+    const existing = professionals.find((item) => item.name.localeCompare(name, "pt-BR", { sensitivity: "base" }) === 0);
+    if (existing) {
+      setBarberFormFeedback(existing.active ? "Esse profissional já está cadastrado." : "Esse profissional já existe. Utilize Reativar na lista.", "error");
+      barberFormFeedback.dataset.formError = "true";
+      return;
+    }
+    barberSubmitButton.dataset.saving = "true";
+    barberSubmitButton.disabled = true;
+    barberSubmitButton.textContent = "Salvando...";
+    setBarberFormFeedback("", "");
+    const initials = name.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+    const newProfessional = {
+      id: `barber-${(globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`)}`,
+      name, role, note, initial: initials, active: true,
+      sort_order: Math.max(0, ...professionals.map((item) => item.sortOrder)) + 1,
+    };
+    try {
+      if (!(await isAdminAuthenticated())) throw new Error("Sua sessão expirou. Entre novamente no painel.");
+      const { data, error } = await getAdminSupabaseClient().from(PROFESSIONALS_REMOTE_TABLE)
+        .insert(newProfessional).select("id, name, role, note, initial, active, sort_order").single();
+      if (error) throw error;
+      barberForm.reset();
+      delete barberFormFeedback.dataset.formError;
+      replaceProfessionalCatalog([...professionals, data]);
+      setBarberFormFeedback(`${name} cadastrado! Já está disponível para agendamento.`, "success");
+    } catch (error) {
+      console.warn("Erro ao cadastrar barbeiro.", error);
+      barberFormFeedback.dataset.formError = "true";
+      setBarberFormFeedback(error?.code === "42501"
+        ? "Seu usuário não tem permissão para cadastrar. Verifique os administradores no SQL do Supabase."
+        : error?.code === "23505" ? "Já existe um profissional com esse nome."
+        : error?.message?.includes("sessão expirou") ? error.message
+        : "Não foi possível salvar no Supabase. Tente novamente.", "error");
+    } finally {
+      barberSubmitButton.dataset.saving = "false";
+      barberSubmitButton.textContent = "Cadastrar barbeiro";
+      barberSubmitButton.disabled = !professionalsLoadedFromRemote;
+    }
+  }
+
+  async function changeBarberAvailability(id, active, button) {
+    const professional = professionals.find((item) => item.id === id);
+    if (!professional || !professionalsLoadedFromRemote) return;
+    if (!active && !confirm(`Excluir ${professional.name} da agenda?\n\nO profissional deixará de aparecer no site, mas seus agendamentos anteriores serão mantidos.`)) return;
+    button.disabled = true;
+    button.textContent = "Salvando...";
+    setBarberFormFeedback("", "");
+    try {
+      if (!(await isAdminAuthenticated())) throw new Error("Sua sessão expirou. Entre novamente no painel.");
+      const { data, error } = await getAdminSupabaseClient().from(PROFESSIONALS_REMOTE_TABLE)
+        .update({ active }).eq("id", id)
+        .select("id, name, role, note, initial, active, sort_order").single();
+      if (error) throw error;
+      replaceProfessionalCatalog(professionals.map((item) => item.id === id ? data : item));
+      setBarberFormFeedback(`${professional.name} ${active ? "reativado" : "excluído da agenda"} com sucesso.`, "success");
+    } catch (error) {
+      console.warn("Erro ao atualizar barbeiro.", error);
+      barberFormFeedback.dataset.formError = "true";
+      setBarberFormFeedback(error?.code === "42501"
+        ? "Seu usuário não tem permissão para alterar barbeiros no Supabase."
+        : error?.message?.includes("sessão expirou") ? error.message
+        : "Não foi possível alterar no Supabase. Tente novamente.", "error");
+      button.disabled = false;
+      button.textContent = active ? "Reativar" : "Excluir";
+    }
   }
 
   function addManualBooking(event) {
     event.preventDefault();
 
     const service = services.find((item) => item.id === manualService.value);
-    const professional = professionals.find((item) => item.id === manualProfessional.value);
+    const professional = getActiveProfessionals().find((item) => item.id === manualProfessional.value);
+    if (!professional) {
+      alert("Cadastre ou reative um barbeiro antes de adicionar um agendamento.");
+      return;
+    }
     const bookingDateIso = manualDate.value || adminTodayIso();
 
     if (!manualTime.value) {
@@ -2025,6 +2271,7 @@ function initEmbeddedAdminPanel() {
     renderAdmin();
     setActiveAdminTab(tab);
     syncAdminBookingsFromRemote();
+    syncProfessionalsFromRemote();
     setTimeout(() => {
       adminOverlay.scrollTo({ top: 0, behavior: "smooth" });
     }, 0);
@@ -2138,10 +2385,20 @@ function initEmbeddedAdminPanel() {
     dailyCalendarView?.addEventListener("click", handleAdminActions);
     manualDate.addEventListener("change", updateManualTimeOptions);
     manualBookingForm.addEventListener("submit", addManualBooking);
+    barberForm?.addEventListener("submit", addBarber);
+    barberRosterList?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-barber-action]");
+      if (!button || button.disabled) return;
+      changeBarberAvailability(button.dataset.barberId, button.dataset.barberAction === "reactivate", button);
+    });
     exportAllButton.addEventListener("click", () => exportBookingsCsv(getFilteredBookings(), `agendamentos-dk-barber-${adminTodayIso()}.csv`));
     exportReportButton.addEventListener("click", exportCurrentReportCsv);
   }
 
+  window.refreshProfessionalsInAdmin = () => {
+    populateManualForm();
+    renderBarbers();
+  };
   adminState.bookings = loadAdminBookings();
   populateManualForm();
   bindAdminEvents();
@@ -2158,6 +2415,11 @@ function initEmbeddedAdminPanel() {
   };
 
   window.addEventListener("storage", (event) => {
+    if (event.key === PROFESSIONALS_STORAGE_KEY) {
+      const newRoster = readCachedProfessionals();
+      if (newRoster) replaceProfessionalCatalog(newRoster);
+      return;
+    }
     if (event.key !== BOOKINGS_STORAGE_KEY) return;
     adminState.bookings = loadAdminBookings();
     renderAdmin();
@@ -2230,6 +2492,14 @@ try {
   console.error("Falha ao iniciar o painel administrativo. Usando abertura básica do painel.", error);
   bindBasicAdminFallbackEvents();
 }
+
+// Atualiza a lista tambem quando a aba volta ao primeiro plano.
+syncProfessionalsFromRemote();
+watchRemoteProfessionals();
+window.addEventListener("focus", () => syncProfessionalsFromRemote());
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") syncProfessionalsFromRemote();
+});
 
 (function initAppleInspiredMotion() {
   const root = document.documentElement;
