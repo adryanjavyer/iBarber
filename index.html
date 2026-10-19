@@ -248,17 +248,34 @@
             >×</button>
           </div>
 
-          <div class="admin-tabs" role="tablist" aria-label="Navegação do painel">
-            <button class="admin-tab active" type="button" data-admin-tab="dashboard">Visão geral</button>
-            <button class="admin-tab" type="button" data-admin-tab="bookings">Agendamentos</button>
-            <button class="admin-tab" type="button" data-admin-tab="reports">Relatórios</button>
-            <button class="admin-tab" type="button" data-admin-tab="barbers">Barbeiros</button>
-            <button class="admin-tab" type="button" data-admin-tab="services">Serviços</button>
-            <button class="admin-tab" type="button" data-admin-tab="clients">Clientes</button>
-            <button class="admin-tab" type="button" data-admin-tab="availability">Expediente</button>
-            <button class="admin-tab" type="button" data-admin-tab="finance">Financeiro</button>
-            <button class="admin-tab" type="button" data-admin-tab="settings">Configurações</button>
-          </div>
+          <div class="admin-mobile-nav">
+          <button
+            class="admin-hamburger-button"
+            type="button"
+            id="adminHamburgerButton"
+            aria-label="Abrir navegação do painel"
+            aria-expanded="false"
+            aria-controls="adminMobileDrawer"
+          >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="admin-mobile-drawer" id="adminMobileDrawer" hidden>
+    <div class="admin-mobile-drawer-inner" role="tablist" aria-label="Navegação do painel">
+      <button class="admin-tab active" type="button" data-admin-tab="dashboard">Visão geral</button>
+      <button class="admin-tab" type="button" data-admin-tab="bookings">Agendamentos</button>
+      <button class="admin-tab" type="button" data-admin-tab="reports">Relatórios</button>
+      <button class="admin-tab" type="button" data-admin-tab="barbers">Barbeiros</button>
+      <button class="admin-tab" type="button" data-admin-tab="services">Serviços</button>
+      <button class="admin-tab" type="button" data-admin-tab="clients">Clientes</button>
+      <button class="admin-tab" type="button" data-admin-tab="availability">Expediente</button>
+      <button class="admin-tab" type="button" data-admin-tab="finance">Financeiro</button>
+      <button class="admin-tab" type="button" data-admin-tab="settings">Configurações</button>
+    </div>
+  </div>
+</div>
         </section>
 
         <section class="admin-panel active" data-admin-panel="dashboard">
