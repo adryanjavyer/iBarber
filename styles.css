@@ -5471,3 +5471,92 @@ body.pro-modal-open {overflow:hidden}
   .apple-experience .admin-brand h1 {font-size:clamp(1.7rem,7vw,2.4rem)!important}
   .apple-experience .admin-brand p {font-size:.77rem!important;line-height:1.45}
 }
+.admin-mobile-nav {
+  position: relative;
+  margin-top: 18px;
+}
+
+.admin-hamburger-button {
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(248, 248, 244, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.admin-hamburger-button span {
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--white);
+  display: block;
+}
+
+.admin-mobile-drawer {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: min(280px, 82vw);
+  z-index: 30;
+  border: 1px solid rgba(248, 248, 244, 0.14);
+  border-radius: 22px;
+  padding: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 18rem),
+    linear-gradient(145deg, rgba(13, 86, 217, 0.10), rgba(226, 27, 45, 0.05)),
+    rgba(4, 5, 8, 0.98);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.admin-mobile-drawer[hidden] {
+  display: none;
+}
+
+.admin-mobile-drawer-inner {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-mobile-drawer .admin-tab {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-weight: 900;
+  text-align: left;
+  padding: 0 14px;
+}
+
+.admin-mobile-drawer .admin-tab.active {
+  color: var(--white);
+  background: linear-gradient(135deg, rgba(13, 86, 217, 0.9), rgba(226, 27, 45, 0.82));
+  box-shadow: 0 12px 24px rgba(13, 86, 217, 0.22);
+}
+
+/* Se quiser manter tabs visíveis em telas grandes */
+@media (min-width: 900px) {
+  .admin-mobile-nav {
+    display: none;
+  }
+
+  .admin-tabs {
+    display: flex;
+  }
+}
+
+/* Se quiser esconder completamente as tabs antigas no mobile */
+@media (max-width: 899px) {
+  .admin-tabs {
+    display: none;
+  }
+}
