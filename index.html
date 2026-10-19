@@ -9,7 +9,6 @@
   <meta name="color-scheme" content="dark" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-  teste 2
 <body class="apple-experience">
   <main class="app-shell">
     <div class="ambient ambient-one"></div>
@@ -244,6 +243,7 @@
             <button class="admin-tab active" type="button" data-admin-tab="dashboard">Visão geral</button>
             <button class="admin-tab" type="button" data-admin-tab="bookings">Agendamentos</button>
             <button class="admin-tab" type="button" data-admin-tab="reports">Relatórios</button>
+            <button class="admin-tab" type="button" data-admin-tab="barbers">Barbeiros</button>
           </div>
         </section>
 
@@ -449,6 +449,56 @@
               <div>
                 <h3>Por profissional</h3>
                 <div id="professionalReportList" class="report-list"></div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="admin-panel" data-admin-panel="barbers" aria-labelledby="barbersHeading">
+          <article class="admin-card barber-manager-card">
+            <div class="card-heading with-border barber-heading">
+              <div>
+                <span class="section-kicker">Equipe</span>
+                <h2 id="barbersHeading">Gerenciar barbeiros</h2>
+                <p>Cadastre novos profissionais e controle quem aparece para agendamento.</p>
+              </div>
+              <span class="barber-count" id="barbersCount">0 ativos</span>
+            </div>
+
+            <div class="barber-manager-grid">
+              <div class="barber-form-area">
+                <div class="barber-subheading">
+                  <span class="barber-form-icon" aria-hidden="true">+</span>
+                  <div>
+                    <h3>Novo profissional</h3>
+                    <p>Será disponibilizado automaticamente na tela inicial.</p>
+                  </div>
+                </div>
+                <form id="barberForm" class="barber-form">
+                  <label for="barberName"><span>Nome completo</span>
+                    <input id="barberName" type="text" maxlength="80" placeholder="Ex.: João Silva" autocomplete="off" required />
+                  </label>
+                  <label for="barberRole"><span>Especialidade</span>
+                    <input id="barberRole" type="text" maxlength="90" placeholder="Ex.: Barbeiro especialista" required />
+                  </label>
+                  <label for="barberNote"><span>Destaque <small>(opcional)</small></span>
+                    <input id="barberNote" type="text" maxlength="60" placeholder="Ex.: Cortes modernos" />
+                  </label>
+                  <button id="barberSubmitButton" class="admin-primary-button full" type="submit" disabled>Cadastrar barbeiro</button>
+                </form>
+                <p class="barber-form-feedback" id="barberFormFeedback" role="status" aria-live="polite"></p>
+              </div>
+
+              <div class="barber-roster-area">
+                <div class="barber-roster-heading">
+                  <div>
+                    <h3>Profissionais cadastrados</h3>
+                    <p>Os ativos podem receber novos agendamentos.</p>
+                  </div>
+                  <span class="barber-live-dot" aria-label="Lista sincronizada"></span>
+                </div>
+                <div id="barberRosterList" class="barber-roster-list" aria-live="polite"></div>
+                <p class="barber-roster-help">Ao excluir, o profissional deixa de aparecer para os clientes. O histórico de agendamentos é preservado e você pode reativá-lo depois.</p>
               </div>
             </div>
           </article>
