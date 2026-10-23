@@ -24,9 +24,9 @@
 
   function paint(theme) {
     root.dataset.theme = theme;
-    root.style.colorScheme = theme;
+    root.style.colorScheme = theme === 'light' ? 'only light' : 'dark';
     if (themeMeta) themeMeta.content = COLORS[theme];
-    if (schemeMeta) schemeMeta.content = theme;
+    if (schemeMeta) schemeMeta.content = 'light dark';
     if (button) {
       const isLight = theme === 'light';
       button.setAttribute('aria-pressed', String(isLight));

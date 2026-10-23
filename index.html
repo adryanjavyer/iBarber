@@ -6,7 +6,7 @@
   <title>iBarber | Agendamento Online</title>
   <meta name="description" content="Agende seu horário na barbearia de forma rápida, elegante e simples pelo celular." />
   <meta name="theme-color" content="#0b0d11" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
   <!-- Aplica o tema antes do primeiro paint: evita clarão na abertura. -->
   <script>
     (() => {
@@ -16,19 +16,19 @@
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = saved === 'light' || saved === 'dark' ? saved : (prefersDark ? 'dark' : 'light');
       document.documentElement.dataset.theme = theme;
-      document.documentElement.style.colorScheme = theme;
+      document.documentElement.style.colorScheme = theme === 'light' ? 'only light' : 'dark';
       document.documentElement.dataset.themePreference = saved === 'light' || saved === 'dark' ? 'manual' : 'system';
       // Cor da barra do navegador também acompanha o primeiro desenho.
       document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f3f4f6' : '#0b0d11');
-      document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', theme);
+      // Esta página oferece ambos os temas; mantenha o anúncio estático para navegadores adaptativos.
     })();
   </script>
   <!-- Fontes com font-display:swap e fallback local caso a rede não esteja disponível. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" />
-  <link rel="stylesheet" href="styles.css?v=20261023-mobilefix2" />
-  <link rel="stylesheet" href="theme.css?v=20261023-mobilefix2" />
+  <link rel="stylesheet" href="styles.css?v=20261023-samsung-v7" />
+  <link rel="stylesheet" href="theme.css?v=20261023-samsung-v7" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/ibarber-icon.svg" type="image/svg+xml" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -677,8 +677,8 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js?v=20261023-mobilefix2"></script>
-  <script src="enhancements.js?v=20261019-completo1"></script>
-  <script src="theme.js?v=20261023-mobilefix2"></script>
+  <script src="script.js?v=20261023-samsung-v7"></script>
+  <script src="enhancements.js?v=20261023-samsung-v7"></script>
+  <script src="theme.js?v=20261023-samsung-v7"></script>
 </body>
 </html>

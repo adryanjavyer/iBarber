@@ -567,3 +567,25 @@ html[data-theme="dark"] .apple-experience .service-card[data-service-id="pe-barb
     height: 72px !important;
   }
 }
+
+/* v7 · preferência explícita: não escurecer novamente a paleta clara.
+   Atenção: o Samsung Internet pode forçar cores apesar destes metadados;
+   a opção "Forçar modo escuro para conteúdo da Web" do navegador deve estar desativada. */
+html[data-theme="light"] {
+  color-scheme: only light !important;
+  background-color: #f3f4f6 !important;
+}
+html[data-theme="dark"] {
+  color-scheme: dark !important;
+  background-color: #0b0d11 !important;
+}
+/* Mantém a superfície principal com cor explícita nos dois tamanhos de viewport,
+   evitando heranças de background de media queries antigas. */
+@media (max-width: 600px) {
+  html[data-theme="light"] body.apple-experience,
+  html[data-theme="light"] .apple-experience .app-shell { background-color: #f3f4f6; }
+  html[data-theme="light"] .apple-experience .phone-card { background-color: #fbfbfc; }
+  html[data-theme="dark"] body.apple-experience,
+  html[data-theme="dark"] .apple-experience .app-shell { background-color: #0b0d11; }
+  html[data-theme="dark"] .apple-experience .phone-card { background-color: #101217; }
+}
