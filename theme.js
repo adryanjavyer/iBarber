@@ -9,6 +9,7 @@
   const system = window.matchMedia?.('(prefers-color-scheme: dark)');
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
   const COLORS = { dark: '#0b0d11', light: '#f3f4f6' };
+  let runningTransition = null;
 
   // Se o armazenamento não estiver disponível, o tema continua funcionando nesta aba.
   const readPreference = () => {
@@ -39,14 +40,34 @@
     const canAnimate = animate && !reducedMotion?.matches && !document.hidden;
     if (!canAnimate) { paint(theme); return; }
 
-    // View Transition faz crossfade até entre gradientes; fallback suaviza cores.
-    if (typeof document.startViewTransition === 'function' && !document.activeViewTransition) {
+    // A animação de temas não disputa o mesmo frame de uma troca de etapa.
+    // Uma nova escolha rápida substitui a anterior sem deixar o tema travado.
+    if (runningTransition) {
+      runningTransition.skipTransition();
+      runningTransition = null;
+      root.classList.remove('theme-view-switch');
+    }
+    if (typeof document.startViewTransition === 'function' &&
+        !document.activeViewTransition && !root.dataset.ibarberDirection) {
       root.classList.add('theme-view-switch');
-      const transition = document.startViewTransition(() => paint(theme));
-      transition.finished.finally(() => root.classList.remove('theme-view-switch'));
+      try {
+        const transition = document.startViewTransition(() => paint(theme));
+        runningTransition = transition;
+        transition.finished.catch(() => {}).finally(() => {
+          if (runningTransition === transition) {
+            runningTransition = null;
+            root.classList.remove('theme-view-switch');
+          }
+        });
+      } catch (error) {
+        root.classList.remove('theme-view-switch');
+        runningTransition = null;
+        paint(theme);
+      }
       return;
     }
 
+    // Fallback acessível para navegadores sem a View Transition API.
     root.classList.add('theme-color-switch');
     requestAnimationFrame(() => {
       paint(theme);

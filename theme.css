@@ -352,3 +352,218 @@ html[data-theme="light"] .apple-experience .admin-card h3 { color: var(--theme-h
   html.theme-view-switch::view-transition-old(root),
   html.theme-view-switch::view-transition-new(root) { animation: none !important; }
 }
+
+
+/* =========================================================
+   iBarber Midnight Atelier — refinamento responsivo e temas · r2
+   Apenas apresentação. Nenhum fluxo ou recurso foi modificado.
+   ========================================================= */
+html[data-theme="dark"] { background-color: #0b0d11; }
+html[data-theme="light"] { background: var(--theme-page); }
+
+/* Conteúdo e estados vazios que conservavam letras brancas no tema claro. */
+html[data-theme="light"] .apple-experience :is(
+  .empty-professionals,.empty-state,.pro-empty,.barber-empty-roster,
+  .barber-form-area,.barber-roster-item,.manual-card,.manual-form,
+  .admin-mobile-nav-heading,.admin-login-card
+) {
+  background: var(--theme-surface-2);
+  border-color: var(--theme-line);
+  color: var(--theme-body);
+}
+html[data-theme="light"] .apple-experience :is(
+  .empty-professionals strong,.empty-state strong,.pro-empty strong,
+  .barber-empty-roster strong,.barber-roster-info strong,
+  .barber-subheading h3,.barber-roster-heading h3,.manual-summary-text strong
+) { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience :is(
+  .empty-professionals p,.empty-state p,.barber-roster-help,
+  .barber-roster-info small,.barber-roster-status,.barber-form-feedback,
+  .barber-subheading p,.barber-roster-heading p,.pro-description,
+  .privacy-note,.consent-line,.cancel-help-text,.form-feedback
+) { color: var(--theme-body); }
+html[data-theme="light"] .apple-experience :is(
+  .secondary-button,.outline-full-button,.ghost-button,.action-button,
+  .calendar-nav-button,.more-menu-button,.admin-logout-text
+) { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience :is(
+  .input-icon,.admin-brand p,.admin-hero .admin-brand p,
+  .admin-hero .admin-topbar p,.admin-login-card p
+) { color: var(--theme-body) !important; }
+html[data-theme="light"] .apple-experience :is(
+  .admin-panel-overlay label,.admin-panel-overlay label span,
+  .admin-login-form label,.admin-login-form label span,
+  .pro-form label,.pro-search,.barber-form label span,
+  .report-controls label,.report-controls label span
+) { color: var(--theme-body) !important; }
+html[data-theme="light"] .apple-experience :is(
+  .admin-close-panel-button,.admin-login-close,.daily-icon-button
+) { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience :is(
+  .admin-secondary-link,.admin-logout-text,.barber-roster-action.reactivate
+) { color: var(--theme-blue-text); }
+html[data-theme="light"] .apple-experience .barber-avatar {
+  background: var(--theme-elevated);
+  border-color: var(--theme-line);
+  color: var(--theme-heading);
+}
+html[data-theme="light"] .apple-experience .barber-roster-action.danger {
+  background: var(--theme-red-bg);
+  color: var(--theme-red-text);
+  border-color: rgba(166,49,61,.17);
+}
+html[data-theme="light"] .apple-experience :is(
+  .admin-panel-overlay .admin-card,.admin-login-card,
+  .metric-card,.pro-row,.pro-metric,.report-list,.report-grid
+) { color: var(--theme-ink); }
+html[data-theme="light"] .apple-experience :is(
+  .admin-panel-overlay .admin-card p,.metric-card span,
+  .metric-card small,.admin-brand small,.admin-hero p,
+  .admin-card .card-heading p,.admin-panel-overlay small
+) { color: var(--theme-body); }
+html[data-theme="light"] .apple-experience :is(
+  .admin-panel-overlay select,.admin-panel-overlay input,
+  .admin-panel-overlay textarea,.admin-login-form input,
+  .pro-form input,.pro-form select,.pro-form textarea,
+  .barber-form input
+) { color: var(--theme-heading); color-scheme: light; }
+
+/* A agenda administrativa tinha fundos pretos independentes do tema. */
+html[data-theme="light"] .apple-experience :is(
+  .calendar-admin-card,.daily-calendar-shell,.daily-app-topbar,
+  .daily-date-header,.daily-calendar-view,.daily-calendar-stage
+) {
+  background: var(--theme-surface) !important;
+  color: var(--theme-ink);
+  border-color: var(--theme-line) !important;
+}
+html[data-theme="light"] .apple-experience .daily-app-topbar {
+  border-bottom: 1px solid var(--theme-line);
+}
+html[data-theme="light"] .apple-experience .daily-date-header {
+  border-bottom: 1px solid var(--theme-line);
+}
+html[data-theme="light"] .apple-experience :is(
+  .daily-app-month,.daily-date-header strong,
+  .daily-icon-button,.daily-hour-line span,.daily-filter-drawer summary,
+  .manual-card summary,.manual-summary-text strong
+) { color: var(--theme-heading) !important; }
+html[data-theme="light"] .apple-experience :is(
+  .daily-date-header span,.daily-date-header small,
+  .manual-summary-text small,.daily-calendar-view .empty-state,
+  .daily-hour-line small,.daily-event-expanded small
+) { color: var(--theme-body) !important; }
+html[data-theme="light"] .apple-experience .daily-hour-line {
+  border-top-color: var(--theme-line) !important;
+}
+html[data-theme="light"] .apple-experience :is(
+  .daily-filter-drawer,.daily-date-controls .daily-icon-button,
+  .daily-today-pill,.daily-export-button,.daily-icon-button,
+  .manual-card-highlight,.manual-card,
+  .daily-event-expanded,.daily-event-expanded .actions-cell
+) {
+  background: var(--theme-surface-2);
+  border-color: var(--theme-line);
+}
+html[data-theme="light"] .apple-experience :is(
+  .daily-today-pill,.daily-export-button,.daily-date-controls .daily-icon-button,
+  .daily-filter-drawer summary,.manual-summary-text strong
+) { color: var(--theme-heading) !important; }
+html[data-theme="light"] .apple-experience .daily-date-controls input[type="date"] {
+  background: var(--theme-input) !important;
+  color: var(--theme-heading) !important;
+  border: 1px solid var(--theme-line) !important;
+  color-scheme: light !important;
+}
+html[data-theme="light"] .apple-experience :is(
+  .manual-card-highlight,.daily-filter-drawer
+) { box-shadow: none; }
+html[data-theme="light"] .apple-experience :is(
+  .daily-event-expanded input,.daily-event-expanded select,
+  .manual-form input,.manual-form select
+) { color-scheme: light; background: var(--theme-input); color: var(--theme-heading); }
+
+/* Painéis de relatório e cartões auxiliares. */
+html[data-theme="light"] .apple-experience :is(
+  .filters-grid,.report-controls,.period-summary-grid,.report-grid,
+  .report-item,.report-list,.service-ranking,.admin-navigation,
+  .barber-manager-grid,.pro-stack,.admin-session-footer
+) { color: var(--theme-ink); }
+html[data-theme="light"] .apple-experience :is(
+  .report-range,.report-list small,.ranking-item small,
+  .pro-row-title span,.calendar-title-wrap span
+) { color: var(--theme-body); }
+
+/* Evita diferença de layout e zoom inesperado ao digitar no Safari do iPhone. */
+@media (max-width: 600px) {
+  html, body.apple-experience { width: 100%; max-width: 100%; }
+  body.apple-experience { overflow-x: clip; }
+  .apple-experience .app-shell { width: 100%; min-width: 0; }
+  .apple-experience .phone-card { width: 100%; min-width: 0; }
+  .apple-experience .hero-topline { min-width: 0; }
+  .apple-experience .hero-actions { flex-shrink: 0; }
+  .apple-experience .brand-lockup { min-width: 0; }
+  .apple-experience .content-area,
+  .apple-experience .footer-actions { box-sizing: border-box; }
+  .apple-experience .footer-actions {
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    margin-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+  }
+  .apple-experience :is(
+    .client-form input,.admin-panel-overlay input,.admin-panel-overlay select,
+    .admin-panel-overlay textarea,.admin-login-form input,
+    .pro-form input,.pro-form select,.pro-form textarea,
+    .barber-form input,.manual-form input,.manual-form select
+  ) { font-size: max(16px, 1rem); }
+  .apple-experience :is(input, textarea) { scroll-margin-bottom: 115px; }
+}
+/* Serviço mantém a mesma composição em smartphones estreitos, sem transbordar. */
+@media (max-width: 365px) {
+  .apple-experience .service-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+    align-items: center;
+  }
+  .apple-experience .service-left { min-width: 0; width: auto; }
+  .apple-experience .service-left .option-main { min-width: 0; }
+  .apple-experience .service-photo-frame { flex-shrink: 0; }
+  .apple-experience .service-card .price {
+    align-self: center;
+    max-width: 86px;
+    padding: 7px;
+    font-size: .73rem;
+    text-align: center;
+    white-space: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-color-switch .apple-experience,
+  html.theme-color-switch .apple-experience * { transition: none !important; }
+}
+
+/* O crossfade do tema deve incluir o conteúdo; a navegação por etapas
+   recupera seu view-transition-name assim que a troca termina. */
+html.theme-view-switch .apple-experience .content-area {
+  view-transition-name: none !important;
+}
+/* A foto do serviço segue o endereço informado no catálogo/Supabase.
+   Os estilos antigos usavam content:url() com um PNG fixo e impediam
+   que o fallback SVG aparecesse quando o arquivo não existia. */
+.apple-experience .service-card[data-service-id="pe-barba"] .service-photo-frame img {
+  content: normal !important;
+}
+html[data-theme="light"] .apple-experience .service-card[data-service-id="pe-barba"] .service-photo-frame {
+  background: var(--theme-elevated) !important;
+}
+html[data-theme="dark"] .apple-experience .service-card[data-service-id="pe-barba"] .service-photo-frame {
+  background: #252b34 !important;
+}
+@media (max-width: 365px) {
+  .apple-experience .service-card[data-service-id="pe-barba"] .service-photo-frame,
+  .apple-experience .service-card .service-photo-frame {
+    flex: 0 0 72px !important;
+    width: 72px !important;
+    height: 72px !important;
+  }
+}
