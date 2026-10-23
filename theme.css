@@ -1,0 +1,354 @@
+/* ============================================================
+   iBarber Midnight Atelier · Temas claro e escuro
+   Paleta centralizada: para mudar a cor, edite SOMENTE os tokens.
+   Os estilos legados permanecem intactos em styles.css.
+   ============================================================ */
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --theme-page: #0b0d11;
+  --theme-shell: #101217;
+  --theme-hero-start: #171b23;
+  --theme-hero-end: #101217;
+  --theme-surface: #1d2027;
+  --theme-surface-2: #171a20;
+  --theme-elevated: #22262e;
+  --theme-selected: #232d3e;
+  --theme-selected-end: #1a2330;
+  --theme-input: #20242b;
+  --theme-muted-bg: #1b1e24;
+  --theme-ink: #f3f4f6;
+  --theme-heading: #eff0f3;
+  --theme-body: #a6acb7;
+  --theme-muted: #858d99;
+  --theme-line: rgba(200,215,235,.13);
+  --theme-blue: #3479d1;
+  --theme-blue-text: #a8caef;
+  --theme-glass: rgba(27,30,36,.93);
+  --theme-shadow: rgba(0,0,0,.26);
+  --theme-status-bg: rgba(84,140,120,.12);
+  --theme-status-text: #9bd9b9;
+  --theme-red-bg: rgba(185,75,84,.12);
+  --theme-red-text: #efa4a8;
+  --theme-focus: #78a6e8;
+}
+html[data-theme="light"] {
+  color-scheme: light;
+  --theme-page: #f3f4f6;
+  --theme-shell: #fbfbfc;
+  --theme-hero-start: #f9fafc;
+  --theme-hero-end: #eaeef5;
+  --theme-surface: #ffffff;
+  --theme-surface-2: #f5f7fa;
+  --theme-elevated: #edf0f5;
+  --theme-selected: #e2ecfb;
+  --theme-selected-end: #f4f8ff;
+  --theme-input: #f7f9fc;
+  --theme-muted-bg: #eef1f5;
+  --theme-ink: #19212e;
+  --theme-heading: #111827;
+  --theme-body: #526072;
+  --theme-muted: #657184;
+  --theme-line: rgba(33,48,69,.15);
+  --theme-blue: #286dc5;
+  --theme-blue-text: #205aa8;
+  --theme-glass: rgba(252,253,255,.94);
+  --theme-shadow: rgba(27,45,70,.09);
+  --theme-status-bg: rgba(24,126,91,.09);
+  --theme-status-text: #146b50;
+  --theme-red-bg: rgba(166,49,61,.075);
+  --theme-red-text: #99313b;
+  --theme-focus: #286dc5;
+  /* Variáveis antigas do layout também apontam para a paleta atual. */
+  --text: var(--theme-ink);
+  --muted: var(--theme-body);
+  --muted-2: var(--theme-muted);
+  --surface: var(--theme-shell);
+  --surface-2: var(--theme-surface);
+  --surface-3: var(--theme-elevated);
+  --line: var(--theme-line);
+  --line-strong: rgba(40,109,197,.52);
+  --apple-text: var(--theme-ink);
+  --atelier-text: var(--theme-ink);
+  --atelier-ink: var(--theme-page);
+}
+
+/* Botão existente no cabeçalho; mesmo tamanho do menu e sem mudar o fluxo. */
+.apple-experience .hero-actions { display: flex; align-items: center; gap: 7px; }
+.apple-experience .theme-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--theme-line);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--theme-surface) 65%, transparent);
+  color: var(--theme-ink);
+  box-shadow: inset 0 1px rgba(255,255,255,.045);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.apple-experience .theme-toggle-glyph { position: relative; display: block; width: 19px; height: 19px; }
+.apple-experience .theme-icon {
+  position: absolute;
+  inset: 0;
+  width: 19px; height: 19px;
+  transition: transform 380ms cubic-bezier(.2,.8,.2,1), opacity 250ms ease;
+}
+html[data-theme="dark"] .theme-icon-sun { opacity: 1; transform: rotate(0deg) scale(1); }
+html[data-theme="dark"] .theme-icon-moon { opacity: 0; transform: rotate(-70deg) scale(.55); }
+html[data-theme="light"] .theme-icon-sun { opacity: 0; transform: rotate(75deg) scale(.5); }
+html[data-theme="light"] .theme-icon-moon { opacity: 1; transform: rotate(0deg) scale(1); }
+.apple-experience .theme-toggle:active { transform: scale(.94); }
+.apple-experience .theme-toggle:focus-visible { outline: 2px solid var(--theme-focus); outline-offset: 3px; }
+@media (hover:hover) and (pointer:fine) {
+  .apple-experience .theme-toggle:hover { background: var(--theme-elevated); border-color: var(--theme-focus); }
+}
+/* Mantém nome da marca, status e os dois ícones no cabeçalho de 320px. */
+@media(max-width: 365px) {
+  .apple-experience .hero-topline { gap: 5px; }
+  .apple-experience .brand-lockup { min-width: 0; gap: 7px; }
+  .apple-experience .brand-lockup strong { font-size: .83rem; }
+  .apple-experience .mini-label { font-size: .53rem; }
+  .apple-experience .hero-actions { gap: 5px; flex-wrap: nowrap; }
+  .apple-experience .status-chip { padding: 6px 7px; font-size: .57rem; }
+  .apple-experience .theme-toggle,
+  .apple-experience .more-menu-button { flex: 0 0 32px; width: 32px; height: 32px; }
+}
+
+/* Tema claro do app real, centralizado nos tokens acima.
+   Não altera grid, tamanhos, estado dos botões, nem regras de reserva. */
+html[data-theme="light"] body.apple-experience {
+  background:
+    radial-gradient(ellipse 64% 380px at 70% -35px, rgba(82,135,204,.10), transparent 85%),
+    radial-gradient(ellipse 40% 360px at 5% 28%, rgba(168,95,105,.045), transparent 86%),
+    var(--theme-page);
+  color: var(--theme-ink);
+}
+html[data-theme="light"] body.apple-experience::before { opacity: .05; }
+html[data-theme="light"] body.apple-experience::after { opacity: .008; mix-blend-mode: multiply; }
+html[data-theme="light"] .apple-experience .ambient { opacity: .13; }
+html[data-theme="light"] .apple-experience .phone-card {
+  background: var(--theme-shell);
+  border-color: var(--theme-line);
+  box-shadow: 0 22px 65px var(--theme-shadow), inset 0 1px #fff;
+}
+html[data-theme="light"] .apple-experience .hero {
+  background:
+    radial-gradient(ellipse 210px 200px at 90% 0%, rgba(69,113,178,.12), transparent 95%),
+    linear-gradient(164deg, var(--theme-hero-start), var(--theme-hero-end));
+  box-shadow: inset 0 1px #fff;
+}
+html[data-theme="light"] .apple-experience .hero::after { background: linear-gradient(90deg,transparent,rgba(43,79,126,.15),transparent); }
+html[data-theme="light"] .apple-experience .hero-pattern { opacity: .012; }
+html[data-theme="light"] .apple-experience .brand-lockup strong,
+html[data-theme="light"] .apple-experience .hero h1,
+html[data-theme="light"] .apple-experience h1,
+html[data-theme="light"] .apple-experience h2,
+html[data-theme="light"] .apple-experience h3,
+html[data-theme="light"] .apple-experience .screen-heading h2,
+html[data-theme="light"] .apple-experience .confirmation-screen h2,
+html[data-theme="light"] .apple-experience .admin-brand h1,
+html[data-theme="light"] .apple-experience .option-main strong { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .mini-label,
+html[data-theme="light"] .apple-experience .hero-text,
+html[data-theme="light"] .apple-experience .screen-heading p,
+html[data-theme="light"] .apple-experience .summary-card p,
+html[data-theme="light"] .apple-experience .client-form label > span,
+html[data-theme="light"] .apple-experience .option-main small,
+html[data-theme="light"] .apple-experience .location-line { color: var(--theme-body); }
+html[data-theme="light"] .apple-experience .status-chip {
+  background: var(--theme-status-bg); border-color: rgba(20,107,80,.17); color: var(--theme-status-text);
+}
+html[data-theme="light"] .apple-experience .status-chip.closed { background: var(--theme-red-bg); color: var(--theme-red-text); }
+html[data-theme="light"] .apple-experience .hero-metrics div {
+  background: rgba(255,255,255,.54);
+  border-color: var(--theme-line);
+  box-shadow: inset 0 1px rgba(255,255,255,.8);
+}
+html[data-theme="light"] .apple-experience .hero-metrics strong { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .hero-metrics span { color: var(--theme-muted); }
+html[data-theme="light"] .apple-experience .progress-area {
+  background: var(--theme-glass);
+  border-color: var(--theme-line);
+  box-shadow: 0 8px 22px var(--theme-shadow), inset 0 1px #fff;
+}
+html[data-theme="light"] .apple-experience .steps-labels { color: var(--theme-muted); }
+html[data-theme="light"] .apple-experience .step-label.active,
+html[data-theme="light"] .apple-experience .step-label.done { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .step-label:not(.active):not(.done) span { background: #ccd4df; }
+html[data-theme="light"] .apple-experience .progress-track { background: #dce3ed; }
+html[data-theme="light"] .apple-experience .progress-fill { background: var(--theme-blue); }
+html[data-theme="light"] .apple-experience .section-kicker,
+html[data-theme="light"] .apple-experience .eyebrow,
+html[data-theme="light"] .apple-experience .admin-eyebrow { color: var(--theme-blue-text); }
+html[data-theme="light"] .apple-experience .option-card,
+html[data-theme="light"] .apple-experience .summary-card,
+html[data-theme="light"] .apple-experience .calendar-widget,
+html[data-theme="light"] .apple-experience .period-summary-card,
+html[data-theme="light"] .apple-experience .booking-item,
+html[data-theme="light"] .apple-experience .ranking-item,
+html[data-theme="light"] .apple-experience .report-item,
+html[data-theme="light"] .apple-experience .mobile-booking-card {
+  background: linear-gradient(158deg,var(--theme-surface),var(--theme-surface-2));
+  color: var(--theme-ink);
+  border-color: var(--theme-line);
+  box-shadow: inset 0 1px rgba(255,255,255,.8);
+}
+html[data-theme="light"] .apple-experience .option-card.selected {
+  background: linear-gradient(153deg,var(--theme-selected),var(--theme-selected-end));
+  border-color: rgba(40,109,197,.52);
+  box-shadow: inset 0 0 0 1px rgba(40,109,197,.045);
+}
+html[data-theme="light"] .apple-experience .option-card .avatar,
+html[data-theme="light"] .apple-experience .service-photo-frame { background: var(--theme-elevated); border-color: var(--theme-line); color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .option-main strong { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .price,
+html[data-theme="light"] .apple-experience .option-note {
+  background: rgba(40,109,197,.09); color: var(--theme-blue-text);
+}
+html[data-theme="light"] .apple-experience .arrow,
+html[data-theme="light"] .apple-experience .input-icon { color: var(--theme-blue-text); }
+html[data-theme="light"] .apple-experience .summary-title,
+html[data-theme="light"] .apple-experience .calendar-title-wrap strong { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .calendar-title-wrap span,
+html[data-theme="light"] .apple-experience .calendar-weekdays span,
+html[data-theme="light"] .apple-experience .divider-label { color: var(--theme-muted); }
+html[data-theme="light"] .apple-experience .calendar-nav-button,
+html[data-theme="light"] .apple-experience .calendar-day,
+html[data-theme="light"] .apple-experience .time-button,
+html[data-theme="light"] .apple-experience .secondary-button,
+html[data-theme="light"] .apple-experience .outline-full-button,
+html[data-theme="light"] .apple-experience .ghost-button,
+html[data-theme="light"] .apple-experience .action-button,
+html[data-theme="light"] .apple-experience .more-menu-button {
+  background: var(--theme-elevated);
+  border-color: var(--theme-line);
+  color: var(--theme-ink);
+  box-shadow: inset 0 1px #fff;
+}
+html[data-theme="light"] .apple-experience .calendar-day.selected,
+html[data-theme="light"] .apple-experience .time-button.selected {
+  background: var(--theme-blue);
+  border-color: var(--theme-blue);
+  color: #fff;
+  box-shadow: inset 0 1px rgba(255,255,255,.2);
+}
+html[data-theme="light"] .apple-experience .calendar-day.is-past,
+html[data-theme="light"] .apple-experience .calendar-day.is-outside,
+html[data-theme="light"] .apple-experience .calendar-day:disabled,
+html[data-theme="light"] .apple-experience .time-button.unavailable,
+html[data-theme="light"] .apple-experience .time-button:disabled {
+  background: var(--theme-muted-bg);
+  border-color: var(--theme-line);
+  color: var(--theme-muted);
+  box-shadow: none;
+}
+html[data-theme="light"] .apple-experience .calendar-day small,
+html[data-theme="light"] .apple-experience .time-button.unavailable small,
+html[data-theme="light"] .apple-experience .time-button:disabled small { color: var(--theme-body); }
+html[data-theme="light"] .apple-experience .calendar-selected-line { background: var(--theme-elevated); border-color: var(--theme-line); }
+html[data-theme="light"] .apple-experience .calendar-selected-line span { color: var(--theme-muted); }
+html[data-theme="light"] .apple-experience .calendar-selected-line strong { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .input-wrap,
+html[data-theme="light"] .apple-experience .admin-login-form input,
+html[data-theme="light"] .apple-experience .admin-panel-overlay input,
+html[data-theme="light"] .apple-experience .admin-panel-overlay select,
+html[data-theme="light"] .apple-experience .admin-panel-overlay textarea,
+html[data-theme="light"] .apple-experience .pro-form input,
+html[data-theme="light"] .apple-experience .pro-form select,
+html[data-theme="light"] .apple-experience .pro-form textarea,
+html[data-theme="light"] .apple-experience .pro-search input,
+html[data-theme="light"] .apple-experience .pro-recover input {
+  background: var(--theme-input);
+  color: var(--theme-ink);
+  border-color: var(--theme-line);
+  box-shadow: inset 0 1px rgba(255,255,255,.8);
+}
+html[data-theme="light"] .apple-experience input::placeholder,
+html[data-theme="light"] .apple-experience textarea::placeholder { color: #798597; opacity: 1; }
+html[data-theme="light"] .apple-experience .primary-button,
+html[data-theme="light"] .apple-experience .admin-primary-button { background: var(--theme-blue); border-color: var(--theme-blue); color:#fff; }
+html[data-theme="light"] .apple-experience .primary-button:disabled { background: #e5e8ee; color: #7b8492; border-color: var(--theme-line); }
+html[data-theme="light"] .apple-experience .footer-actions {
+  background: var(--theme-glass);
+  border-color: var(--theme-line);
+  box-shadow: 0 10px 24px var(--theme-shadow), inset 0 1px #fff;
+}
+html[data-theme="light"] .apple-experience .social-links a { color: var(--theme-blue-text); }
+html[data-theme="light"] .apple-experience .cancel-button { background: var(--theme-red-bg); color: var(--theme-red-text); border-color: rgba(153,49,59,.18); }
+html[data-theme="light"] .apple-experience .more-menu-dropdown { background: #fff; color: var(--theme-ink); border-color: var(--theme-line); box-shadow: 0 18px 45px var(--theme-shadow); }
+html[data-theme="light"] .apple-experience .more-menu-dropdown button { color: var(--theme-ink); }
+html[data-theme="light"] .apple-experience .more-menu-dropdown small { color: var(--theme-muted); }
+
+/* Inclui painéis administrativos e modais, sem tocar no funcionamento deles. */
+html[data-theme="light"] .apple-experience .admin-panel-overlay .embedded-admin-shell { background: var(--theme-page); color: var(--theme-ink); }
+html[data-theme="light"] .apple-experience .admin-login-card,
+html[data-theme="light"] .apple-experience .admin-hero,
+html[data-theme="light"] .apple-experience .admin-card,
+html[data-theme="light"] .apple-experience .metric-card {
+  background: linear-gradient(165deg,var(--theme-surface),var(--theme-surface-2)) !important;
+  color: var(--theme-ink) !important;
+  border-color: var(--theme-line) !important;
+  box-shadow: inset 0 1px #fff, 0 8px 26px var(--theme-shadow) !important;
+}
+html[data-theme="light"] .apple-experience .admin-tabs { background: var(--theme-elevated) !important; border-color: var(--theme-line) !important; }
+html[data-theme="light"] .apple-experience .admin-tab { color: var(--theme-body) !important; }
+html[data-theme="light"] .apple-experience .admin-tab.active { background: var(--theme-selected) !important; color: var(--theme-blue-text) !important; }
+html[data-theme="light"] .apple-experience .admin-hero .admin-mobile-nav-heading { background: var(--theme-elevated); border-color: var(--theme-line); }
+html[data-theme="light"] .apple-experience .admin-hero .admin-hamburger-button { background: var(--theme-surface); color: var(--theme-heading); border-color: var(--theme-line); }
+html[data-theme="light"] .apple-experience .admin-hero #adminActiveSectionLabel { color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .admin-hero .admin-mobile-nav-eyebrow,
+html[data-theme="light"] .apple-experience .admin-hero .admin-mobile-nav-chevron { color: var(--theme-muted); }
+html[data-theme="light"] .apple-experience .pro-modal-body { background: linear-gradient(150deg,var(--theme-surface),var(--theme-surface-2)); color: var(--theme-ink); border-color: var(--theme-line); }
+html[data-theme="light"] .apple-experience .pro-modal-body > p { color: var(--theme-body); }
+html[data-theme="light"] .apple-experience .pro-modal-heading button { background: var(--theme-elevated); border-color: var(--theme-line); color: var(--theme-heading); }
+html[data-theme="light"] .apple-experience .pro-row,
+html[data-theme="light"] .apple-experience .pro-metric { background: var(--theme-surface); color: var(--theme-ink); border-color: var(--theme-line); }
+html[data-theme="light"] .apple-experience .pro-row p,
+html[data-theme="light"] .apple-experience .pro-metric span,
+html[data-theme="light"] .apple-experience .pro-description,
+html[data-theme="light"] .apple-experience .pro-feedback { color: var(--theme-body); }
+html[data-theme="light"] .apple-experience .pro-toast { background: var(--theme-surface); color: var(--theme-heading); border-color: var(--theme-line); }
+html[data-theme="light"] .apple-experience .admin-login-card p,
+html[data-theme="light"] .apple-experience .admin-brand p,
+html[data-theme="light"] .apple-experience .card-heading p { color: var(--theme-body); }
+html[data-theme="light"] .apple-experience .metric-card strong,
+html[data-theme="light"] .apple-experience .admin-card strong,
+html[data-theme="light"] .apple-experience .admin-card h2,
+html[data-theme="light"] .apple-experience .admin-card h3 { color: var(--theme-heading); }
+@media(max-width:800px){
+  html[data-theme="light"] .apple-experience .admin-hero #adminNavTabs.admin-tabs {
+    background: linear-gradient(150deg,var(--theme-surface),var(--theme-surface-2)) !important;
+    border-color: var(--theme-line) !important;
+  }
+}
+
+/* Transição cinematográfica: aciona APENAS após clique ou mudança do SO.
+   Nenhum fade inicial: não aparece tema errado por um frame. */
+@media(prefers-reduced-motion: no-preference) {
+  html.theme-view-switch::view-transition-old(root) {
+    animation: theme-out 420ms cubic-bezier(.4,0,.2,1) both;
+  }
+  html.theme-view-switch::view-transition-new(root) {
+    animation: theme-in 420ms cubic-bezier(.4,0,.2,1) both;
+  }
+  @keyframes theme-out { to { opacity: 0; } }
+  @keyframes theme-in { from { opacity: 0; } }
+  html.theme-color-switch .apple-experience,
+  html.theme-color-switch .apple-experience :is(.hero,.phone-card,.progress-area,.option-card,.summary-card,.calendar-widget,.calendar-day,.time-button,.primary-button,.secondary-button,.footer-actions,.admin-card,.metric-card,.admin-hero,.admin-login-card,.pro-modal-body) {
+    transition-property: color, background-color, border-color, box-shadow, opacity;
+    transition-duration: 420ms;
+    transition-timing-function: cubic-bezier(.4,0,.2,1);
+  }
+}
+@media(prefers-reduced-motion: reduce) {
+  .apple-experience .theme-icon { transition: none; }
+  .apple-experience .theme-toggle { transition: none; }
+  html.theme-view-switch::view-transition-old(root),
+  html.theme-view-switch::view-transition-new(root) { animation: none !important; }
+}
